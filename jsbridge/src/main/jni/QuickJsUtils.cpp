@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "QuickJsUtils.h"
+#include "log.h"
 
 // static
 JSClassID QuickJsUtils::js_cppwrapper_class_id;
@@ -58,9 +59,13 @@ JStringLocalRef QuickJsUtils::toJString(JSValueConst v) const {
 }
 
 std::string QuickJsUtils::toString(JSValueConst v) const {
+  alog("BW - QuickJsUtils::toString() - P0 - tag = %d", JS_VALUE_GET_TAG(v));
   const char *cstr = JS_ToCString(m_ctx, v);
+  alog("BW - QuickJsUtils::toString() - P1");
+  alog("BW - QuickJsUtils::toString() - P2 - cstr = %s", cstr);
   std::string ret = cstr;
   JS_FreeCString(m_ctx, cstr);
+  alog("BW - QuickJsUtils::toString() - PE");
   return ret;
 }
 
