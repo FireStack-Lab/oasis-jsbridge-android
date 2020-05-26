@@ -52,6 +52,13 @@ bool QuickJsUtils::hasPropertyStr(JSValueConst this_obj, const char *prop) const
 
 // TODO: avoid double string allocation and re-use internal pointer in JSValue
 JStringLocalRef QuickJsUtils::toJString(JSValueConst v) const {
+  // Seems that QuickJS crashes on Android when calling JS_ToString() for some objects
+  // (assumption: objects wrapping C pointers)
+  if (JS_IsObject(v)) {
+    alog("BW - QuickJsUtils::toJString() - converting object to [object Object]...");
+    return JStringLocalRef(m_jniContext, "[object Object]");
+  }
+
   const char *cstr = JS_ToCString(m_ctx, v);
   JStringLocalRef ret(m_jniContext, cstr);
   JS_FreeCString(m_ctx, cstr);
@@ -59,6 +66,13 @@ JStringLocalRef QuickJsUtils::toJString(JSValueConst v) const {
 }
 
 std::string QuickJsUtils::toString(JSValueConst v) const {
+  // Seems that QuickJS crashes on Android when calling JS_ToString() for some objects
+  // (assumption: objects wrapping C pointers)
+  if (JS_IsObject(v)) {
+    alog("BW - QuickJsUtils::toString() - converting object to [object Object]...");
+    return "[object Object]";
+  }
+
   alog("BW - QuickJsUtils::toString() - P0 - tag = %d", JS_VALUE_GET_TAG(v));
   const char *cstr = JS_ToCString(m_ctx, v);
   alog("BW - QuickJsUtils::toString() - P1");
